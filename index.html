@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatCommerce OS — Your store, inside WhatsApp</title>
+<meta name="description" content="Turn your Shopify store into a fully automated WhatsApp storefront. Customers browse, pay via UPI, and track orders without leaving the chat.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08110D; --bg2:#0B1A14; --panel:#0F231B; --line:rgba(37,211,102,.14);
+    --green:#25D366; --green-dk:#128C7E; --ink:#E9F5EE; --mut:#8FA89B;
+    --chat-bg:#0B141A; --bubble-in:#202C33; --bubble-out:#005C4B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden}
+  h1,h2,h3{font-family:'Sora',sans-serif;line-height:1.15}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--green);background:rgba(37,211,102,.06)}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#04140B;font-weight:600;padding:14px 28px;border-radius:12px;font-size:15px;transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,211,102,.25)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{box-shadow:none;border-color:var(--green)}
+  nav{position:sticky;top:0;z-index:50;background:rgba(8,17,13,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:19px}
+  .logo span{color:var(--green)}
+  .navlinks{display:flex;gap:28px;font-size:14px;color:var(--mut)}
+  .navlinks a:hover{color:var(--ink)}
+  .nav-cta{background:var(--green);color:#04140B;font-weight:600;padding:9px 18px;border-radius:10px;font-size:14px}
+
+  /* HERO */
+  .hero{padding:88px 0 40px;position:relative}
+  .hero::before{content:'';position:absolute;top:-200px;right:-150px;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(37,211,102,.10),transparent 65%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+  .hero h1{font-size:clamp(38px,5.2vw,60px);font-weight:800;letter-spacing:-.02em;margin:22px 0 18px}
+  .hero h1 em{font-style:normal;color:var(--green)}
+  .hero p.sub{font-size:18px;color:var(--mut);max-width:520px;margin-bottom:32px}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:36px}
+  .trustline{display:flex;gap:22px;font-size:13px;color:var(--mut);flex-wrap:wrap}
+  .trustline b{color:var(--ink);font-weight:600}
+
+  /* PHONE */
+  .phone{width:340px;max-width:100%;margin:0 auto;background:#1B272E;border-radius:36px;padding:12px;box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06)}
+  .screen{background:var(--chat-bg);border-radius:26px;overflow:hidden}
+  .chat-head{background:#1F2C34;display:flex;align-items:center;gap:10px;padding:12px 14px}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-dk));display:flex;align-items:center;justify-content:center;font-size:16px}
+  .chat-head .name{font-size:14px;font-weight:600}
+  .chat-head .status{font-size:11px;color:var(--green)}
+  .chat{padding:14px 12px 18px;display:flex;flex-direction:column;gap:9px;min-height:430px}
+  .msg{max-width:82%;padding:8px 11px;border-radius:10px;font-size:12.5px;line-height:1.45;opacity:0;transform:translateY(8px);animation:pop .45s forwards}
+  .msg.in{background:var(--bubble-in);align-self:flex-start;border-top-left-radius:2px}
+  .msg.out{background:var(--bubble-out);align-self:flex-end;border-top-right-radius:2px}
+  .msg b{display:block}
+  .msg .chip{display:block;margin-top:7px;padding:7px 0 2px;border-top:1px solid rgba(255,255,255,.12);color:#53BDEB;text-align:center;font-weight:600;font-size:12px}
+  .msg img{width:100%;border-radius:8px;margin-bottom:6px;display:block}
+  .prodimg{height:92px;background:linear-gradient(135deg,#F8E8D8,#F3D5B5);border-radius:8px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;font-size:34px}
+  @keyframes pop{to{opacity:1;transform:none}}
+  .m1{animation-delay:.3s}.m2{animation-delay:1.2s}.m3{animation-delay:2.2s}.m4{animation-delay:3.2s}.m5{animation-delay:4.4s}.m6{animation-delay:5.6s}
+  .replay-note{text-align:center;font-size:12px;color:var(--mut);margin-top:14px}
+
+  /* SECTIONS */
+  section{padding:88px 0}
+  .kicker{color:var(--green);font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+  .h2{font-size:clamp(28px,3.6vw,40px);font-weight:700;letter-spacing:-.01em;margin-bottom:16px;max-width:640px}
+  .lead{color:var(--mut);font-size:17px;max-width:600px}
+
+  /* STATS */
+  .stats{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:52px 0}
+  .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+  .stat .n{font-family:'Sora',sans-serif;font-size:38px;font-weight:800;color:var(--green)}
+  .stat .l{font-size:13.5px;color:var(--mut);margin-top:4px}
+
+  /* DEMO */
+  .promo{width:100%;border-radius:20px;border:1px solid var(--line);margin-top:44px;box-shadow:0 30px 70px rgba(0,0,0,.45);display:block;background:#000}
+  .shots{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:26px}
+  .shots figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .shots figure.wide{grid-column:1/-1}
+  .shots img{width:100%;display:block;max-height:520px;object-fit:cover;object-position:top}
+  .shots figure.wide img{max-height:640px}
+  .shots figcaption{padding:14px 18px;font-size:14px;color:var(--mut)}
+  .shots-note{margin-top:18px;font-size:13.5px;color:var(--mut)}
+  @media(max-width:900px){.shots{grid-template-columns:1fr}}
+
+  /* STEPS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 26px;position:relative}
+  .step .num{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--green);margin-bottom:14px;letter-spacing:.1em}
+  .step h3{font-size:19px;margin-bottom:10px}
+  .step p{font-size:14.5px;color:var(--mut)}
+
+  /* FEATURES */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px}
+  .feat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px 26px;transition:border-color .2s,transform .2s}
+  .feat:hover{border-color:rgba(37,211,102,.4);transform:translateY(-3px)}
+  .feat .ic{font-size:26px;margin-bottom:14px}
+  .feat h3{font-size:17px;margin-bottom:8px}
+  .feat p{font-size:14px;color:var(--mut)}
+
+  /* DASHBOARD */
+  .dash{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .dash .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+  .dash-mock{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .kpi .v{font-family:'Sora',sans-serif;font-weight:700;font-size:19px}
+  .kpi .k{font-size:11px;color:var(--mut);margin-top:2px}
+  .kpi .d{font-size:11px;color:var(--green)}
+  .bars{display:flex;align-items:flex-end;gap:9px;height:110px;padding:10px 6px 0}
+  .bar{flex:1;background:linear-gradient(180deg,var(--green),rgba(37,211,102,.25));border-radius:5px 5px 0 0;animation:grow 1.2s ease-out}
+  @keyframes grow{from{height:0}}
+  .dash-list{margin-top:26px;display:flex;flex-direction:column;gap:14px}
+  .dash-list li{list-style:none;display:flex;gap:12px;font-size:15px;color:var(--mut)}
+  .dash-list li::before{content:'✓';color:var(--green);font-weight:700}
+
+  /* PRICING */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px}
+  .plan{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:34px 28px;display:flex;flex-direction:column}
+  .plan.hot{border-color:var(--green);position:relative;box-shadow:0 24px 56px rgba(37,211,102,.12)}
+  .plan.hot .tag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--green);color:#04140B;font-size:12px;font-weight:700;padding:4px 14px;border-radius:999px}
+  .plan h3{font-size:18px}
+  .plan .price{font-family:'Sora',sans-serif;font-size:38px;font-weight:800;margin:14px 0 2px}
+  .plan .price small{font-size:14px;color:var(--mut);font-weight:400}
+  .plan ul{margin:22px 0 28px;display:flex;flex-direction:column;gap:11px}
+  .plan li{list-style:none;font-size:14px;color:var(--mut);display:flex;gap:10px}
+  .plan li::before{content:'✓';color:var(--green)}
+  .plan .btn{margin-top:auto;justify-content:center}
+
+  /* CTA + FOOTER */
+  .final{padding:100px 0;text-align:center;background:radial-gradient(ellipse at center,rgba(37,211,102,.08),transparent 70%)}
+  .final .h2{margin:0 auto 16px}
+  .final .lead{margin:0 auto 34px}
+  footer{border-top:1px solid var(--line);padding:36px 0;font-size:13.5px;color:var(--mut)}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+
+  @media(max-width:900px){
+    .hero .wrap,.dash .wrap{grid-template-columns:1fr}
+    .stats .wrap{grid-template-columns:repeat(2,1fr)}
+    .steps,.feat-grid,.plans{grid-template-columns:1fr}
+    .navlinks{display:none}
+    .hero{padding-top:56px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">ChatCommerce<span> OS</span></div>
+    <div class="navlinks">
+      <a href="#demo">Demo</a><a href="#how">How it works</a><a href="#features">Features</a><a href="#dashboard">Dashboard</a><a href="#pricing">Pricing</a>
+    </div>
+    <a class="nav-cta" href="#pricing">Start free trial</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="pill">● Built for Indian D2C brands</span>
+      <h1>Your store, <em>inside WhatsApp.</em></h1>
+      <p class="sub">Customers browse your catalog, pay via UPI, and track orders — without ever leaving the chat. Connect Shopify once, and ChatCommerce OS runs your WhatsApp storefront on autopilot.</p>
+      <div class="hero-ctas">
+        <a class="btn" href="#pricing">Start 14-day free trial</a>
+        <a class="btn ghost" href="#how">Watch it work ↓</a>
+      </div>
+      <div class="trustline">
+        <span>Payments by <b>Razorpay UPI</b></span>
+        <span>Catalog by <b>Shopify</b></span>
+        <span>Official <b>WhatsApp Cloud API</b></span>
+      </div>
+    </div>
+    <div>
+      <div class="phone">
+        <div class="screen">
+          <div class="chat-head">
+            <div class="avatar">🛍️</div>
+            <div><div class="name">GlowSkin Beauty</div><div class="status">online</div></div>
+          </div>
+          <div class="chat">
+            <div class="msg out m1">Hi 👋</div>
+            <div class="msg in m2"><b>Welcome to GlowSkin Beauty!</b>How can I help you today?<span class="chip">🛍️ Browse Products</span></div>
+            <div class="msg in m3"><span class="prodimg">🧴</span><b>Vitamin C Serum 30ml</b>💰 ₹1,299 <s style="color:#8FA89B">₹1,599</s> · In stock<span class="chip">🛒 Add to Cart</span></div>
+            <div class="msg out m4">✅ Added! Checkout please</div>
+            <div class="msg in m5"><b>💳 Complete Your Payment</b>Total: ₹1,299<br>Pay via UPI → rzp.io/glow…<span class="chip">✅ I've Paid</span></div>
+            <div class="msg in m6"><b>✅ Order Confirmed!</b>ORD-8K2M · Delivery in 3–5 days.<br>Track updates right here 📦</div>
+          </div>
+        </div>
+      </div>
+      <p class="replay-note">A real purchase — 45 seconds, zero website visits.</p>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="wrap">
+    <div class="stat"><div class="n">550M+</div><div class="l">WhatsApp users in India</div></div>
+    <div class="stat"><div class="n">98%</div><div class="l">message open rate (email: ~20%)</div></div>
+    <div class="stat"><div class="n">3–5×</div><div class="l">chat conversion vs mobile web</div></div>
+    <div class="stat"><div class="n">47%</div><div class="l">abandoned carts recovered in chat</div></div>
+  </div>
+</div>
+
+<section id="demo">
+  <div class="wrap">
+    <div class="kicker">See it in action</div>
+    <h2 class="h2">Watch a full purchase — 45 seconds, zero website visits.</h2>
+    <video class="promo" controls preload="metadata" poster="shots/dashboard.png">
+      <source src="assets/promo.mp4" type="video/mp4">
+      Your browser doesn't support embedded video — <a href="assets/promo.mp4">download the demo</a>.
+    </video>
+    <div class="shots">
+      <figure>
+        <img src="shots/simulator-product.png" alt="Product card with photo, price and Add to Cart inside the WhatsApp chat" loading="lazy">
+        <figcaption>Product cards in chat — photos, prices, one-tap add</figcaption>
+      </figure>
+      <figure>
+        <img src="shots/simulator-cart.png" alt="Cart summary with total and Checkout button inside the WhatsApp chat" loading="lazy">
+        <figcaption>Cart &amp; checkout without leaving WhatsApp</figcaption>
+      </figure>
+      <figure class="wide">
+        <img src="shots/dashboard.png" alt="Merchant dashboard with GMV chart, KPIs, top products and live order feed" loading="lazy">
+        <figcaption>The merchant dashboard — GMV, conversion, cart recovery, live orders</figcaption>
+      </figure>
+    </div>
+    <p class="shots-note">Real screenshots from the product. Try it yourself in the interactive simulator when you start a trial.</p>
+  </div>
+</section>
+
+<section id="how" style="padding-top:0">
+  <div class="wrap">
+    <div class="kicker">How it works</div>
+    <h2 class="h2">Connect once. Sell forever.</h2>
+    <p class="lead">No code, no new app for your customers, no ops burden for you.</p>
+    <div class="steps">
+      <div class="step"><div class="num">STEP 01</div><h3>Connect your Shopify store</h3><p>One-time OAuth connect. Your entire catalog, prices, images and live inventory sync automatically — and stay synced via webhooks.</p></div>
+      <div class="step"><div class="num">STEP 02</div><h3>Share your WhatsApp number</h3><p>Customers say "hi" and get a guided storefront: categories, product cards with photos, and a cart — powered by the official WhatsApp Cloud API.</p></div>
+      <div class="step"><div class="num">STEP 03</div><h3>Get paid, auto-fulfill</h3><p>UPI payment links via Razorpay, instant order confirmation in chat, and the order lands in Shopify for your normal fulfilment flow.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="features" style="padding-top:0">
+  <div class="wrap">
+    <div class="kicker">Features</div>
+    <h2 class="h2">Everything between "hi" and "delivered".</h2>
+    <div class="feat-grid">
+      <div class="feat"><div class="ic">🛒</div><h3>In-chat checkout</h3><p>Browse → cart → address → UPI payment, entirely inside WhatsApp. No redirects, no login walls, no drop-off.</p></div>
+      <div class="feat"><div class="ic">🔄</div><h3>Cart recovery on autopilot</h3><p>Abandoned carts get a smart nudge with a one-tap resume button. Recovered revenue shows up on your dashboard.</p></div>
+      <div class="feat"><div class="ic">🖼️</div><h3>Rich product cards</h3><p>Real product photos from your Shopify CDN, prices, discounts and stock — rendered natively in the chat.</p></div>
+      <div class="feat"><div class="ic">📊</div><h3>Merchant dashboard</h3><p>GMV, orders, conversion, AOV, recovery rate and a live order feed — per store, in real time.</p></div>
+      <div class="feat"><div class="ic">📦</div><h3>Order tracking in chat</h3><p>"track" shows customers their recent orders and status. Shipping updates arrive in the same thread they bought in.</p></div>
+      <div class="feat"><div class="ic">🏢</div><h3>Multi-tenant by design</h3><p>Run one brand or twenty. Every merchant gets isolated data, their own credentials, and their own analytics.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="dash" id="dashboard">
+  <div class="wrap">
+    <div>
+      <div class="kicker">Command center</div>
+      <h2 class="h2">Know exactly what WhatsApp earns you.</h2>
+      <ul class="dash-list">
+        <li>WhatsApp GMV, orders and conversion at a glance</li>
+        <li>Live order feed as payments land</li>
+        <li>Top products by chat revenue</li>
+        <li>Cart-recovery rate — the money you didn't lose</li>
+      </ul>
+    </div>
+    <div class="dash-mock">
+      <div class="kpis">
+        <div class="kpi"><div class="d">+23%</div><div class="v">₹4.8L</div><div class="k">WhatsApp GMV</div></div>
+        <div class="kpi"><div class="d">+18%</div><div class="v">347</div><div class="k">Orders</div></div>
+        <div class="kpi"><div class="d">+8%</div><div class="v">47%</div><div class="k">Carts recovered</div></div>
+      </div>
+      <div class="bars">
+        <div class="bar" style="height:38%"></div><div class="bar" style="height:52%"></div><div class="bar" style="height:46%"></div><div class="bar" style="height:66%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:82%"></div><div class="bar" style="height:96%"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="kicker">Pricing</div>
+    <h2 class="h2">Less than one day of your ad spend.</h2>
+    <p class="lead">14-day free trial on every plan. No card required.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Starter</h3>
+        <div class="price">₹1,999<small>/mo</small></div>
+        <ul><li>1 store</li><li>500 orders/month</li><li>Catalog sync + in-chat checkout</li><li>UPI payments via Razorpay</li></ul>
+        <a class="btn ghost" href="#">Start free</a>
+      </div>
+      <div class="plan hot">
+        <span class="tag">MOST POPULAR</span>
+        <h3>Growth</h3>
+        <div class="price">₹4,999<small>/mo</small></div>
+        <ul><li>2,000 orders/month</li><li>Cart recovery on autopilot</li><li>Analytics dashboard</li><li>Priority support</li></ul>
+        <a class="btn" href="#">Start free</a>
+      </div>
+      <div class="plan">
+        <h3>Scale</h3>
+        <div class="price">₹12,999<small>/mo</small></div>
+        <ul><li>Unlimited orders</li><li>Multi-store / agency mode</li><li>API access</li><li>Dedicated success manager</li></ul>
+        <a class="btn ghost" href="#">Talk to us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2 class="h2">Your customers are already on WhatsApp.<br>Your store should be too.</h2>
+    <p class="lead">Join the first 20 design-partner brands and get 3 months at 50% off.</p>
+    <a class="btn" href="#">Start your free trial →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 ChatCommerce OS · Made in India 🇮🇳</div>
+    <div>Payments by Razorpay · Catalog by Shopify · WhatsApp Cloud API</div>
+  </div>
+</footer>
+
+</body>
+</html>

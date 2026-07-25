@@ -13,3 +13,14 @@ state). Single self-contained `index.html` + promo video + product screenshots.
   CLAUDE.md.
 
 Last audit: 2026-07-12 (state = last commit `1357226`, 2026-07-07).
+
+## 2026-07-25 responsive + honesty pass
+- Mobile nav no longer deleted at <=900px — collapses into a `<details>` hamburger (no JS).
+- Fixed 150px horizontal overflow at 375px: `.hero::before` (a decorative radial at
+  `right:-150px`) now clipped by `overflow:hidden` on `.hero`.
+- Four dead `href="#"` CTAs -> `mailto:kaustubh.trt@gmail.com` with per-plan subjects.
+- The orphaned contact strip that sat *outside* `</footer>` is now inside the footer.
+- **Stat band reframed.** 550M+ / 98% / 3-5x / 47% are published channel benchmarks, not
+  ChatCommerce OS results — the band is now labelled "Why the channel works" and carries an
+  explicit note saying so. Do not re-present them as product metrics; there are no customers
+  yet. Replace with real numbers only when there are real numbers.

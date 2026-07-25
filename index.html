@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root{color-scheme:dark;
     --bg:#08110D; --bg2:#0B1A14; --panel:#0F231B; --line:rgba(37,211,102,.14);
     --green:#25D366; --green-dk:#128C7E; --ink:#E9F5EE; --mut:#8FA89B;
     --chat-bg:#0B141A; --bubble-in:#202C33; --bubble-out:#005C4B;
@@ -32,8 +32,14 @@
   .navlinks a:hover{color:var(--ink)}
   .nav-cta{background:var(--green);color:#04140B;font-weight:600;padding:9px 18px;border-radius:10px;font-size:14px}
 
+  /* mobile nav — native <details>, no JS */
+  .menu{position:relative;display:flex}
+  .menu>summary{display:none;list-style:none}
+  .menu>summary::-webkit-details-marker{display:none}
+  @media(min-width:901px){.menu::details-content{content-visibility:visible;block-size:auto}}
+
   /* HERO */
-  .hero{padding:88px 0 40px;position:relative}
+  .hero{padding:88px 0 40px;position:relative;overflow:hidden}
   .hero::before{content:'';position:absolute;top:-200px;right:-150px;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(37,211,102,.10),transparent 65%);pointer-events:none}
   .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
   .hero h1{font-size:clamp(38px,5.2vw,60px);font-weight:800;letter-spacing:-.02em;margin:22px 0 18px}
@@ -73,6 +79,8 @@
   .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
   .stat .n{font-family:'Sora',sans-serif;font-size:38px;font-weight:800;color:var(--green)}
   .stat .l{font-size:13.5px;color:var(--mut);margin-top:4px}
+  .stats-label{text-align:center;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:26px}
+  .stats-note{text-align:center;font-size:12.5px;color:var(--mut);margin-top:28px;opacity:.8}
 
   /* DEMO */
   .promo{width:100%;border-radius:20px;border:1px solid var(--line);margin-top:44px;box-shadow:0 30px 70px rgba(0,0,0,.45);display:block;background:#000}
@@ -140,8 +148,29 @@
     .hero .wrap,.dash .wrap{grid-template-columns:1fr}
     .stats .wrap{grid-template-columns:repeat(2,1fr)}
     .steps,.feat-grid,.plans{grid-template-columns:1fr}
-    .navlinks{display:none}
     .hero{padding-top:56px}
+
+    /* hamburger goes last so the drop-down anchors to the right edge, not mid-bar */
+    .menu{order:3}
+    .menu>summary{
+      display:grid;place-items:center;width:44px;height:44px;cursor:pointer;
+      border:1px solid var(--line);border-radius:12px;color:var(--ink);
+    }
+    .menu>summary::after{
+      content:"";width:18px;height:2px;background:currentColor;border-radius:2px;
+      box-shadow:0 -6px 0 currentColor,0 6px 0 currentColor;
+    }
+    .menu[open]>summary{border-color:var(--green)}
+    .menu:not([open]) .navlinks{display:none}
+    .navlinks{
+      position:absolute;right:0;top:calc(100% + 14px);z-index:80;
+      flex-direction:column;align-items:stretch;gap:2px;
+      min-width:min(74vw,250px);padding:10px;
+      background:var(--panel);border:1px solid var(--line);border-radius:16px;
+      box-shadow:0 26px 60px rgba(0,0,0,.55);
+    }
+    .navlinks a{padding:13px 14px;border-radius:10px;font-size:15px}
+    .navlinks a:hover{background:rgba(233,245,238,.06)}
   }
 </style>
 </head>
@@ -150,9 +179,12 @@
 <nav>
   <div class="wrap">
     <div class="logo">ChatCommerce<span> OS</span></div>
-    <div class="navlinks">
-      <a href="#demo">Demo</a><a href="#how">How it works</a><a href="#features">Features</a><a href="#dashboard">Dashboard</a><a href="#pricing">Pricing</a>
-    </div>
+    <details class="menu">
+      <summary aria-label="Open menu"></summary>
+      <div class="navlinks" onclick="this.parentElement.open=false">
+        <a href="#demo">Demo</a><a href="#how">How it works</a><a href="#features">Features</a><a href="#dashboard">Dashboard</a><a href="#pricing">Pricing</a>
+      </div>
+    </details>
     <a class="nav-cta" href="#pricing">Start free trial</a>
   </div>
 </nav>
@@ -196,11 +228,17 @@
 </header>
 
 <div class="stats">
+  <div class="wrap" style="display:block">
+    <p class="stats-label">Why the channel works</p>
+  </div>
   <div class="wrap">
     <div class="stat"><div class="n">550M+</div><div class="l">WhatsApp users in India</div></div>
     <div class="stat"><div class="n">98%</div><div class="l">message open rate (email: ~20%)</div></div>
     <div class="stat"><div class="n">3–5×</div><div class="l">chat conversion vs mobile web</div></div>
     <div class="stat"><div class="n">47%</div><div class="l">abandoned carts recovered in chat</div></div>
+  </div>
+  <div class="wrap" style="display:block">
+    <p class="stats-note">Published industry benchmarks for the WhatsApp / chat-commerce channel — not ChatCommerce OS results. We're pre-launch and don't quote customer numbers we haven't earned.</p>
   </div>
 </div>
 
@@ -293,20 +331,20 @@
         <h3>Starter</h3>
         <div class="price">₹1,999<small>/mo</small></div>
         <ul><li>1 store</li><li>500 orders/month</li><li>Catalog sync + in-chat checkout</li><li>UPI payments via Razorpay</li></ul>
-        <a class="btn ghost" href="#">Start free</a>
+        <a class="btn ghost" href="mailto:kaustubh.trt@gmail.com?subject=ChatCommerce%20OS%20—%20Starter%20trial">Start free</a>
       </div>
       <div class="plan hot">
         <span class="tag">MOST POPULAR</span>
         <h3>Growth</h3>
         <div class="price">₹4,999<small>/mo</small></div>
         <ul><li>2,000 orders/month</li><li>Cart recovery on autopilot</li><li>Analytics dashboard</li><li>Priority support</li></ul>
-        <a class="btn" href="#">Start free</a>
+        <a class="btn" href="mailto:kaustubh.trt@gmail.com?subject=ChatCommerce%20OS%20—%20Growth%20trial">Start free</a>
       </div>
       <div class="plan">
         <h3>Scale</h3>
         <div class="price">₹12,999<small>/mo</small></div>
         <ul><li>Unlimited orders</li><li>Multi-store / agency mode</li><li>API access</li><li>Dedicated success manager</li></ul>
-        <a class="btn ghost" href="#">Talk to us</a>
+        <a class="btn ghost" href="mailto:kaustubh.trt@gmail.com?subject=ChatCommerce%20OS%20—%20Scale%20plan">Talk to us</a>
       </div>
     </div>
   </div>
@@ -316,7 +354,7 @@
   <div class="wrap">
     <h2 class="h2">Your customers are already on WhatsApp.<br>Your store should be too.</h2>
     <p class="lead">Join the first 20 design-partner brands and get 3 months at 50% off.</p>
-    <a class="btn" href="#">Start your free trial →</a>
+    <a class="btn" href="mailto:kaustubh.trt@gmail.com?subject=ChatCommerce%20OS%20—%20design%20partner">Become a design partner →</a>
   </div>
 </section>
 
@@ -324,10 +362,8 @@
   <div class="wrap">
     <div>© 2026 ChatCommerce OS · Made in India 🇮🇳</div>
     <div>Payments by Razorpay · Catalog by Shopify · WhatsApp Cloud API</div>
+    <div>Contact <a href="mailto:kaustubh.trt@gmail.com" style="color:var(--green)">kaustubh.trt@gmail.com</a></div>
   </div>
 </footer>
-
-
-<div style="border-top:1px solid rgba(128,128,128,.3);padding:24px 16px;text-align:center;font-size:14px;opacity:.8">Contact: <a href="mailto:kaustubh.trt@gmail.com" style="color:inherit;text-decoration:underline">kaustubh.trt@gmail.com</a></div>
 </body>
 </html>
